@@ -1,30 +1,30 @@
 # SAM (Self-supervised Anatomical eMbedding) and UAE (Universal Anatomical Embedding)
 Please find our papers:
 1. Xiaoyu Bai, Fan Bai, Xiaofei Huo, Jia Ge, Jingjing Lu, Xianghua Ye, Ke Yan, Yong Xia, "UAE: Universal Anatomical 
-Embedding on Multi-modality Medical Images". 2023 ([arXiv](https://arxiv.org/pdf/2311.15111.pdf))
+Embedding on Multi-modality Medical Images". Medical Image Analysis, 2025 ([arXiv](https://arxiv.org/pdf/2311.15111.pdf))
 2. Ke Yan, Jinzheng Cai, Dakai Jin, Shun Miao, Dazhou Guo, Adam P. Harrison, Youbao Tang, 
 Jing Xiao, Jingjing Lu, Le Lu, "SAM: Self-supervised Learning of Pixel-wise Anatomical Embeddings in Radiological 
 Images". IEEE Trans. on Medical Imaging, 2022 ([arXiv](https://arxiv.org/abs/2012.02383))
 
-SAM can be used to match arbitrary anatomical landmarks between two radiological images (e.g. CT, MR, X-ray, etc.) You
+SAM can be used to match arbitrary anatomical landmarks between two radiological images (e.g., CT, MR, X-ray, etc.) You
 can pick one point in any anatomy from one image, and then use SAM to detect it in all other images. Its applications
 include but are not limited to:
 * Lesion tracking in longitudinal data;
 * One-shot universal anatomical landmark detection;
-* Using the landmarks to help to align two images, e.g. for registration ([SAME](https://arxiv.org/abs/2109.11572),
-[SAMConvex](https://arxiv.org/abs/2307.09727));
+* Using the landmarks to help align two images, e.g., for registration ([SAME/SAME++](https://github.com/alibaba-damo-academy/same),
+[SAMConvex](https://github.com/alibaba-damo-academy/samconvex));
 * Using the landmarks to extract anatomy-aware features ([phase recognition](https://openreview.net/forum?id=0wblcjbC2sN));
 * Using the cross-image matching to help self-supervised learning ([Alice](https://arxiv.org/pdf/2302.05615.pdf)); etc.
 
 Here are some examples of SAM's lesion tracking results on the DeepLesion dataset. Green circles mark the lesion’s central point in the template 
-scan and the detected points in follow-up scans. The predicted similarity scores are also shown. See paper for details.
+scan and the detected points in follow-up scans. The predicted similarity scores are also shown. See the paper for details.
 
 ![](./resources/SAM_examples.png)
 
 SAM has several advantages:
 * Unsupervised in training;
 * Fast in inference;
-* Can be used to match arbitrary points in body;
+* Can be used to match arbitrary points in the body;
 * Robust to common image variations, such as inter-subject variability, organ deformation, contrast injection,
 different field-of-views, moderate pathological changes, image noise, and even modality change.
 
@@ -33,7 +33,7 @@ UAE-S and UAE-M, which are designed for single- and multi-modality embedding lea
 * Using organ mask supervision to enhance the semantic information of SAM embeddings, allowing it to match better in hard 
 organs;
 * Inventing a structural inference technique to refine the matched coordinates;
-* Leveraging aggressive contrast augmentation and a novel iterative training process to enable cross-modality matching (e.g. CT and
+* Leveraging aggressive contrast augmentation and a novel iterative training process to enable cross-modality matching (e.g., CT and
 multi-modal MR).
 
 This repo contains both the original SAM reimplementation and UAE. It is written by **Xiaoyu Bai** (bai.aa1234241@gmail.com), 
@@ -59,6 +59,9 @@ See [this page](./resources/algorithm_frameworks.md).
 ```
 python3 -m venv venv_sam
 source venv_sam/bin/activate
+pip install -U openmim
+mim install mmcv-full==1.4.7
+cd SAM
 python -m pip install -e .  # note that mmcv may take a long time to install
 ```
 The pretrained checkpoints and sample data are stored in [ModelScope](https://www.modelscope.cn/home). To download, 
@@ -84,7 +87,7 @@ We have prepared a few example images in `data` folder. You can try the pretrain
 
 - For the original SAM model, use:
 ```
-# assume all input image are in torchio "LPS+" direction which equals to "RAI" orientation in ITK-Snap.
+# assume all input images are in torchio "LPS+" direction which equals to "RAI" orientation in ITK-Snap.
 tools/demo.py
 ```
 - For UAE-S, use:
@@ -105,5 +108,5 @@ See [this page](./resources/training.md).
 * When you want to match points between several images in multiple rounds, a way to save time is to first generate the 
 embeddings of all images in advance, and then you can do matching with them. The major time cost lies in embedding computation.
 * SAM may be inaccurate on areas without apparent discriminative textures, such as bowel, muscle, fat, and skin. It cannot
-match points outside the human body, or body parts outside chest-abdomen-pelvis.
+match points outside the human body, or body parts outside the chest-abdomen-pelvis.
   * Note that sometimes it is hard to define exact matching points, because similarity varies by viewing angles.
